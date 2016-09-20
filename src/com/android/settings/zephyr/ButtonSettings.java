@@ -141,7 +141,7 @@ public class ButtonSettings extends ActionFragment implements OnPreferenceChange
             if (mBacklightTimeout != null) {
         	mBacklightTimeout.setOnPreferenceChangeListener(this);
         	int BacklightTimeout = Settings.System.getInt(getContentResolver(),
-                	Settings.System.BUTTON_BRIGHTNESS, 5);
+                        Settings.System.BUTTON_BACKLIGHT_TIMEOUT, 5000);
         	mBacklightTimeout.setValue(Integer.toString(BacklightTimeout));
         	mBacklightTimeout.setSummary(mBacklightTimeout.getEntry());
             }
@@ -178,7 +178,7 @@ public class ButtonSettings extends ActionFragment implements OnPreferenceChange
             String BacklightTimeout = (String) newValue;
             int BacklightTimeoutValue = Integer.parseInt(BacklightTimeout);
             Settings.System.putInt(getActivity().getContentResolver(),
-                    Settings.System.BUTTON_BRIGHTNESS, BacklightTimeoutValue);
+                    Settings.System.BUTTON_BACKLIGHT_TIMEOUT, BacklightTimeoutValue);
             int BacklightTimeoutIndex = mBacklightTimeout
                     .findIndexOfValue(BacklightTimeout);
             mBacklightTimeout
