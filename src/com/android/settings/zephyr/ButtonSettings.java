@@ -43,6 +43,7 @@ import com.android.settings.du.nav.ActionFragment;
 public class ButtonSettings extends ActionFragment implements OnPreferenceChangeListener {
 
     //Keys
+    private static final String KEY_BACKLIGHT_TIMEOUT = "backlight_timeout";
     private static final String HWKEY_DISABLE = "hardware_keys_disable";
     private static final String CATEGORY_HWKEY = "hardware_keys";
     private static final String CATEGORY_BACK = "back_key";
@@ -60,6 +61,7 @@ public class ButtonSettings extends ActionFragment implements OnPreferenceChange
     public static final int KEY_MASK_APP_SWITCH = 0x10;
 
     private SwitchPreference mHwKeyDisable;
+    private ListPreference mBacklightTimeout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -106,6 +108,8 @@ public class ButtonSettings extends ActionFragment implements OnPreferenceChange
                 (PreferenceCategory) prefScreen.findPreference(CATEGORY_ASSIST);
         final PreferenceCategory appSwitchCategory =
                 (PreferenceCategory) prefScreen.findPreference(CATEGORY_APPSWITCH);
+        mBacklightTimeout =
+                (ListPreference) findPreference(KEY_BACKLIGHT_TIMEOUT);
 
         // back key
         if (!hasBackKey) {
@@ -130,6 +134,19 @@ public class ButtonSettings extends ActionFragment implements OnPreferenceChange
         // search/assist key
         if (!hasAssistKey) {
             prefScreen.removePreference(assistCategory);
+        }
+ 
+        // Backlight
+        if (hasMenuKey || hasHomeKey) {
+            if (mBacklightTimeout != null) {
+        	mBacklightTimeout.setOnPreferenceChangeListener(this);
+        	int BacklightTimeout = Settings.System.getInt(getContentResolver(),
+                	Settings.System.BUTTON_BRIGHTNESS, 5);
+        	mBacklightTimeout.setValue(Integer.toString(BacklightTimeout));
+        	mBacklightTimeout.setSummary(mBacklightTimeout.getEntry());
+            }
+        } else {
+            prefScreen.removePreference(mBacklightTimeout);
         }
 
         // let super know we can load ActionPreferences
@@ -156,6 +173,16 @@ public class ButtonSettings extends ActionFragment implements OnPreferenceChange
             Settings.Secure.putInt(getContentResolver(), Settings.Secure.HARDWARE_KEYS_DISABLE,
                     value ? 1 : 0);
             setActionPreferencesEnabled(!value);
+            return true;
+        } else if (preference == mBacklightTimeout) {
+            String BacklightTimeout = (String) newValue;
+            int BacklightTimeoutValue = Integer.parseInt(BacklightTimeout);
+            Settings.System.putInt(getActivity().getContentResolver(),
+                    Settings.System.BUTTON_BRIGHTNESS, BacklightTimeoutValue);
+            int BacklightTimeoutIndex = mBacklightTimeout
+                    .findIndexOfValue(BacklightTimeout);
+            mBacklightTimeout
+                    .setSummary(mBacklightTimeout.getEntries()[BacklightTimeoutIndex]);
             return true;
         }
         return false;
