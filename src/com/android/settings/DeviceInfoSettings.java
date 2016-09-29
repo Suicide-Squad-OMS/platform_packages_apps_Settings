@@ -85,6 +85,7 @@ public class DeviceInfoSettings extends SettingsPreferenceFragment implements In
     private static final String PROPERTY_QGP_VERSION = "persist.qgp.version";
     private static final String KEY_MOD_BUILD_DATE = "build_date";
     private static final String KEY_VENDOR_VERSION = "vendor_version";
+    private static final String KEY_DEVICE_MAINTAINER = "device_maintainer";
 
     static final int TAPS_TO_BE_A_DEVELOPER = 7;
 
@@ -152,6 +153,7 @@ public class DeviceInfoSettings extends SettingsPreferenceFragment implements In
         setValueSummary(KEY_MOD_BUILD_DATE, "ro.build.date");
         setValueSummary(KEY_ZEPHYR_VERSION, "ro.zephyr.version");
         findPreference(KEY_ZEPHYR_VERSION).setEnabled(true);
+        setMaintainerSummary(KEY_DEVICE_MAINTAINER, "ro.zephyr.maintainer");
 
         if (!SELinux.isSELinuxEnabled()) {
             String status = getResources().getString(R.string.selinux_status_disabled);
@@ -362,6 +364,20 @@ public class DeviceInfoSettings extends SettingsPreferenceFragment implements In
             findPreference(preference).setSummary(
                     SystemProperties.get(property,
                             getResources().getString(R.string.device_info_default)));
+        } catch (RuntimeException e) {
+            // No recovery
+        }
+    }
+
+    private void setMaintainerSummary(String preference, String property) {
+        try {
+            String maintainers = SystemProperties.get(property,
+                    getResources().getString(R.string.device_info_default));
+            findPreference(preference).setSummary(maintainers);
+            if (maintainers.contains(",")) {
+                findPreference(preference).setTitle(
+                        getResources().getString(R.string.device_maintainers));
+            }
         } catch (RuntimeException e) {
             // No recovery
         }
