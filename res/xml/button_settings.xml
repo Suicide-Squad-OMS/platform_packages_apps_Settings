@@ -25,8 +25,7 @@
     <SwitchPreference
         android:key="button_brightness"
         android:title="@string/button_brightness_title"
-        android:persistent="false"
-        android:dependency="hardware_keys_disable" />
+        android:persistent="false" />
 
     <ListPreference
         android:dialogTitle="@string/backlight_timeout_title"
@@ -34,8 +33,7 @@
         android:entryValues="@array/backlight_timeout_values"
         android:key="backlight_timeout"
         android:persistent="false"
-        android:title="@string/backlight_timeout_title"
-        android:dependency="hardware_keys_disable" />
+        android:title="@string/backlight_timeout_title" />
 
 </PreferenceCategory>
 
